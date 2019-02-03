@@ -29,6 +29,25 @@ public class myMovement : MonoBehaviour
     private GameObject thisCursor;
     private GameObject selected;
     private myMovement the_other_script;
+    
+    
+    //Enum values for object layer values
+    enum OBJECT_LAYERS
+    {
+        Dragging = 8,
+        Normal = 9,
+        Enemy = 10
+    };
+
+    //Enum values for sprite sorting layer values
+    enum SORTING_LAYERS
+    {
+        Default,
+        Background,
+        Pieces,
+        Player,
+        Dragging
+    };
 
 
     void Start()
@@ -92,21 +111,21 @@ public class myMovement : MonoBehaviour
     {
         myCurrPosition = transform.position;
 
-        if (myCurrPosition.x < thresholdR && (Input.GetKeyDown("d") == true || Input.GetKeyDown("right") == true))
+        if (myCurrPosition.x < thresholdR && (Input.GetKeyDown("d") == true || Input.GetKeyDown(KeyCode.RightArrow) == true))
         {
             transform.Translate(myJump + jump_offset, 0, 0);
             left_or_right = true;
         }
-        else if (myCurrPosition.x > thresholdL && (Input.GetKeyDown("a") == true || Input.GetKeyDown("left") == true))
+        else if (myCurrPosition.x > thresholdL && (Input.GetKeyDown("a") == true || Input.GetKeyDown(KeyCode.LeftArrow) == true))
         {
             transform.Translate((myJump + jump_offset) * -1, 0, 0);
             left_or_right = false;
         }
-        else if (myCurrPosition.y < thresholdU && (Input.GetKeyDown("w") == true || Input.GetKeyDown("up") == true))
+        else if (myCurrPosition.y < thresholdU && (Input.GetKeyDown("w") == true || Input.GetKeyDown(KeyCode.UpArrow) == true))
         {
             transform.Translate(0, myJump, 0);
         }
-        else if (myCurrPosition.y > thresholdD && (Input.GetKeyDown("s") == true || Input.GetKeyDown("down") == true))
+        else if (myCurrPosition.y > thresholdD && (Input.GetKeyDown("s") == true || Input.GetKeyDown(KeyCode.DownArrow) == true))
         {
             transform.Translate(0, myJump * -1, 0);
         }
@@ -128,23 +147,27 @@ public class myMovement : MonoBehaviour
 
                 selected = pieceGrabber(myCurrPosition);
                 the_other_obj.GetComponent<SpriteRenderer>().sprite = selected.GetComponent<SpriteRenderer>().sprite;
+                the_other_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
+                the_other_obj.layer = (int)OBJECT_LAYERS.Normal;
                 selected.SetActive(false);
             }
             else if (string.Equals(gameObject.name, "myCursor"))
             {
                 GameObject new_obj = Instantiate(gameObject, myCurrPosition, Quaternion.identity);
                 new_obj.transform.localScale = cursor_size5;
+                new_obj.layer = (int)OBJECT_LAYERS.Normal;
+                new_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
                 gameObject.SetActive(false);
                 the_other_script.enter_pressed1 = false;
             }
         }
         else
         {
-            if (string.Equals(gameObject.name, "myCursor") && frames % 12 == 0)
+            if (string.Equals(gameObject.name, "myCursor") && frames % 4 == 0)
             {
                 idleAnimationGrid();
             }
-            else if (string.Equals(gameObject.name, "Arrow") && frames % 6 == 0 && !enter_pressed1)
+            else if (string.Equals(gameObject.name, "Arrow") && frames % 2 == 0 && !enter_pressed1)
             {
                 Debug.Log("9");
                 idleAnimationPiece();
