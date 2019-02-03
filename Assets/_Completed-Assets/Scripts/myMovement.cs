@@ -146,10 +146,17 @@ public class myMovement : MonoBehaviour
                 }
 
                 selected = pieceGrabber(myCurrPosition);
-                the_other_obj.GetComponent<SpriteRenderer>().sprite = selected.GetComponent<SpriteRenderer>().sprite;
-                the_other_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Dragging;
-                the_other_obj.layer = (int)OBJECT_LAYERS.Normal;
-                selected.SetActive(false);
+                if (selected != null)
+                {
+                	the_other_obj.GetComponent<SpriteRenderer>().sprite = selected.GetComponent<SpriteRenderer>().sprite;
+                	the_other_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Dragging;
+                	the_other_obj.layer = (int)OBJECT_LAYERS.Normal;
+                	selected.SetActive(false);
+                }
+                else
+                {
+                	
+                }
             }
             else if (string.Equals(gameObject.name, "myCursor"))
             {
@@ -300,7 +307,13 @@ public class myMovement : MonoBehaviour
         }
 
         final_values.y = current_location.y;
+        RaycastHit2D obj_found = Physics2D.Raycast(final_values, direction);
+        
+        if (obj_found)
+        {
+        	return obj_found.transform.gameObject;
+        }
 
-        return Physics2D.Raycast(final_values, direction).transform.gameObject;
+        return null;
     }
 }
