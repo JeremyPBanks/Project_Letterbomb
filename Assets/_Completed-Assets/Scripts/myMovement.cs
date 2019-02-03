@@ -147,7 +147,7 @@ public class myMovement : MonoBehaviour
 
                 selected = pieceGrabber(myCurrPosition);
                 the_other_obj.GetComponent<SpriteRenderer>().sprite = selected.GetComponent<SpriteRenderer>().sprite;
-                the_other_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
+                the_other_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Dragging;
                 the_other_obj.layer = (int)OBJECT_LAYERS.Normal;
                 selected.SetActive(false);
             }
@@ -169,7 +169,6 @@ public class myMovement : MonoBehaviour
             }
             else if (string.Equals(gameObject.name, "Arrow") && frames % 2 == 0 && !enter_pressed1)
             {
-                Debug.Log("9");
                 idleAnimationPiece();
             }
             if (frames == 60)
