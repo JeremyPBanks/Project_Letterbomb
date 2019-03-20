@@ -12,6 +12,7 @@ public class myMovement : MonoBehaviour
     private Vector2 direction = Vector2.zero;
     private Vector2 obj_hit;
     private Vector3 myCurrPosition;
+    private Vector3 saved_position;
     private Vector3 cursor_size5 = new Vector3(0.6f, 0.6f, 0.6f);
     private Vector3 cursor_size4 = new Vector3(0.7f, 0.7f, 0.7f);
     private Vector3 cursor_size3 = new Vector3(0.8f, 0.8f, 0.8f);
@@ -36,7 +37,8 @@ public class myMovement : MonoBehaviour
     {
         Dragging = 8,
         Normal = 9,
-        Enemy = 10
+        Enemy = 10,
+        On_Board = 11
     };
 
     //Enum values for sprite sorting layer values
@@ -133,9 +135,6 @@ public class myMovement : MonoBehaviour
         {
             if (string.Equals(gameObject.name, "Arrow") && !enter_pressed1)
             {
-                enter_pressed1 = true;
-                the_other_obj.SetActive(true);
-
                 if (myCurrPosition.x >= -18.3)
                 {
                     transform.position = new Vector3(-17.4f, myCurrPosition.y, 0);
@@ -148,22 +147,33 @@ public class myMovement : MonoBehaviour
                 selected = pieceGrabber(myCurrPosition);
                 if (selected != null)
                 {
+                	enter_pressed1 = true;
+                	the_other_obj.SetActive(true);
                 	the_other_obj.GetComponent<SpriteRenderer>().sprite = selected.GetComponent<SpriteRenderer>().sprite;
                 	the_other_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Dragging;
                 	the_other_obj.layer = (int)OBJECT_LAYERS.Normal;
+                	the_other_script.saved_position = selected.transform.position;
                 	selected.SetActive(false);
+                	Debug.Log("Grabbed Piece");
                 }
                 else
                 {
-                	
+                	return_piece = findPieceToReturn();
+                	GameObject return_obj = Instantiate(return_piece, myCurrPosition, Quaternion.identity);
+                	return_obj.transform.localScale = cursor_size5;
+                	return_obj.layer = (int)OBJECT_LAYERS.Normal;
+                	return_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
+                	Debug.Log("Phantom Piece");
                 }
             }
             else if (string.Equals(gameObject.name, "myCursor"))
             {
+            	Debug.Log("Now On Board");
                 GameObject new_obj = Instantiate(gameObject, myCurrPosition, Quaternion.identity);
                 new_obj.transform.localScale = cursor_size5;
                 new_obj.layer = (int)OBJECT_LAYERS.Normal;
                 new_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
+                new_obj.GetComponent<myMovement>().saved_position = saved_position;//TODO:find another way to do this?
                 gameObject.SetActive(false);
                 the_other_script.enter_pressed1 = false;
             }
@@ -315,5 +325,13 @@ public class myMovement : MonoBehaviour
         }
 
         return null;
+    }
+    
+    
+    //*****************************************************************************************************************************
+    //*  Finds the piece on the board with the coordinates of where the user arrow is, in order to return it to the player's deck *
+    //*****************************************************************************************************************************
+    private GameObject findPieceToReturn()
+    {
     }
 }
