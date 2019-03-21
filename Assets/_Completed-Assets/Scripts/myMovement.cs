@@ -3,35 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class myMovement : MonoBehaviour
-{
-    public float myJump;
-    public float jump_offset;
-    public Vector2 myActionStart = new Vector2(0f, 0f);
-    public int gridWidth = 7;
-    public GameObject the_other_obj;
-    private Vector2 direction = Vector2.zero;
-    private Vector2 obj_hit;
-    private Vector3 myCurrPosition;
-    private Vector3 saved_position;
-    private Vector3 cursor_size5 = new Vector3(0.6f, 0.6f, 0.6f);
-    private Vector3 cursor_size4 = new Vector3(0.7f, 0.7f, 0.7f);
-    private Vector3 cursor_size3 = new Vector3(0.8f, 0.8f, 0.8f);
-    private Vector3 cursor_size2 = new Vector3(0.9f, 0.9f, 0.9f);
-    private Vector3 cursor_size1 = new Vector3(1f, 1f, 1f);
-    private int last_cursor_size = 1;
-    private bool cursor_direction = false;//false = down, true = up
-    private bool left_or_right = false;//false = left, true = right
-    private bool enter_pressed1 = false;
-    private int frames = 0;
-    private float thresholdR;
-    private float thresholdL;
-    private float thresholdU;
-    private float thresholdD;
-    private GameObject thisCursor;
-    private GameObject selected;
-    private myMovement the_other_script;
-    
-    
+{    
     //Enum values for object layer values
     enum OBJECT_LAYERS
     {
@@ -50,6 +22,47 @@ public class myMovement : MonoBehaviour
         Player,
         Dragging
     };
+    
+    //Struct for the purpose of being able to make (x,y) points as a dictionary key
+    public struct Coordinates_Key
+	{
+	   public float x;
+	   public float y;
+	   public Coordinates_Key(float x, float y)
+	   {
+		  this.x = x;
+		  this.y = y;
+	   }
+	 }
+	 
+	public float myJump;
+    public float jump_offset;
+    public Vector2 myActionStart = new Vector2(0f, 0f);
+    public int gridWidth = 7;
+    public GameObject the_other_obj;
+    public GameObject piece_template;
+    private Vector2 direction = Vector2.zero;
+    private Vector2 obj_hit;
+    private Vector3 myCurrPosition;
+    private static Vector3 saved_position;
+    private Vector3 cursor_size5 = new Vector3(0.6f, 0.6f, 0.6f);
+    private Vector3 cursor_size4 = new Vector3(0.7f, 0.7f, 0.7f);
+    private Vector3 cursor_size3 = new Vector3(0.8f, 0.8f, 0.8f);
+    private Vector3 cursor_size2 = new Vector3(0.9f, 0.9f, 0.9f);
+    private Vector3 cursor_size1 = new Vector3(1f, 1f, 1f);
+    private int last_cursor_size = 1;
+    private bool cursor_direction = false;//false = down, true = up
+    private bool left_or_right = false;//false = left, true = right
+    private bool enter_pressed1 = false;
+    private int frames = 0;
+    private float thresholdR;
+    private float thresholdL;
+    private float thresholdU;
+    private float thresholdD;
+    private GameObject thisCursor;
+    private GameObject selected;
+    private myMovement the_other_script;
+    private static Dictionary<Coordinates_Key, GameObject> returnDict = new Dictionary<Coordinates_Key, GameObject>();
 
 
     void Start()
@@ -135,6 +148,7 @@ public class myMovement : MonoBehaviour
         {
             if (string.Equals(gameObject.name, "Arrow") && !enter_pressed1)
             {
+            	Debug.Log(gameObject.GetComponent<SpriteRenderer>().sortingOrder);
                 if (myCurrPosition.x >= -18.3)
                 {
                     transform.position = new Vector3(-17.4f, myCurrPosition.y, 0);
@@ -144,7 +158,7 @@ public class myMovement : MonoBehaviour
                     transform.position = new Vector3(-22.4f, myCurrPosition.y, 0);
                 }
 
-                selected = pieceGrabber(myCurrPosition);
+                selected = pieceGrabber(transform.position);
                 if (selected != null)
                 {
                 	enter_pressed1 = true;
@@ -152,28 +166,35 @@ public class myMovement : MonoBehaviour
                 	the_other_obj.GetComponent<SpriteRenderer>().sprite = selected.GetComponent<SpriteRenderer>().sprite;
                 	the_other_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Dragging;
                 	the_other_obj.layer = (int)OBJECT_LAYERS.Normal;
-                	the_other_script.saved_position = selected.transform.position;
+                	saved_position = selected.transform.position;
                 	selected.SetActive(false);
                 	Debug.Log("Grabbed Piece");
                 }
                 else
                 {
-                	return_piece = findPieceToReturn();
-                	GameObject return_obj = Instantiate(return_piece, myCurrPosition, Quaternion.identity);
-                	return_obj.transform.localScale = cursor_size5;
-                	return_obj.layer = (int)OBJECT_LAYERS.Normal;
-                	return_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
+                	Debug.Log(xValueFromDirection());
+                	myCurrPosition.x = xValueFromDirection();
+                	var key = new Coordinates_Key(myCurrPosition.x,myCurrPosition.y);
+                	GameObject return_piece = returnDict[key];
+                	GameObject piece_is_back = Instantiate(return_piece, myCurrPosition, Quaternion.identity);
+                	piece_is_back.transform.localScale = cursor_size5;
+                	//piece_is_back.layer = (int)OBJECT_LAYERS.Normal;
+                	//piece_is_back.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
+                	returnDict.Remove(key);
+                	return_piece.SetActive(false);
                 	Debug.Log("Phantom Piece");
                 }
             }
             else if (string.Equals(gameObject.name, "myCursor"))
             {
             	Debug.Log("Now On Board");
-                GameObject new_obj = Instantiate(gameObject, myCurrPosition, Quaternion.identity);
+                GameObject new_obj = Instantiate(piece_template, myCurrPosition, Quaternion.identity);
                 new_obj.transform.localScale = cursor_size5;
-                new_obj.layer = (int)OBJECT_LAYERS.Normal;
-                new_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
-                new_obj.GetComponent<myMovement>().saved_position = saved_position;//TODO:find another way to do this?
+                //new_obj.layer = (int)OBJECT_LAYERS.Normal;
+                //new_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
+                new_obj.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
+                returnDict.Add(new Coordinates_Key(saved_position.x,saved_position.y),new_obj);
+                Debug.Log(saved_position);
                 gameObject.SetActive(false);
                 the_other_script.enter_pressed1 = false;
             }
@@ -298,6 +319,15 @@ public class myMovement : MonoBehaviour
             }
         }
     }
+    
+    
+    //*****************************************************************
+    //*  Returns the x-valued coordinate based on the cursor location *
+    //*****************************************************************
+    private float xValueFromDirection()
+    {
+    	return (left_or_right) ? -15f : -20f ;
+    }
 
 
     //***************************************************************
@@ -307,15 +337,7 @@ public class myMovement : MonoBehaviour
     {
         Vector2 final_values = new Vector2(0f, 0f);
 
-        if (left_or_right)
-        {
-            final_values.x = -15f;
-        }
-        else
-        {
-            final_values.x = -20f;
-        }
-
+        final_values.x = xValueFromDirection();
         final_values.y = current_location.y;
         RaycastHit2D obj_found = Physics2D.Raycast(final_values, direction);
         
@@ -325,13 +347,5 @@ public class myMovement : MonoBehaviour
         }
 
         return null;
-    }
-    
-    
-    //*****************************************************************************************************************************
-    //*  Finds the piece on the board with the coordinates of where the user arrow is, in order to return it to the player's deck *
-    //*****************************************************************************************************************************
-    private GameObject findPieceToReturn()
-    {
     }
 }

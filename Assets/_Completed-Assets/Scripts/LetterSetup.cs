@@ -41,7 +41,7 @@ public class LetterSetup : MonoBehaviour, ITileCheckable<Vector2>
     private static readonly Vector3 LETTER_SCALE = new Vector3(0.6f, 0.6f, 0.6f);
     private Vector3[] playerLetterPos = new Vector3[8];
     private static GameObject[] opponentLetters = new GameObject[8];
-    private static IDictionary<int, Sprite> myLetterDict = new Dictionary<int, Sprite>();
+    private static Dictionary<int, Sprite> myLetterDict = new Dictionary<int, Sprite>();
     private int numSelectP;
     private int numSelectO;
     private int localLetter;

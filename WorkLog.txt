@@ -1,9 +1,17 @@
-******************
-*  Jeremy Banks  *
-******************
+************************************************
+*  Jeremy Banks - Project Letterbomb Work Log  *
+************************************************
 
 ## 3/19/2019
+
+Time Spent: ~1:30
 
 I'm starting a work log in an effort to try to both document my progess as I go and motivate myself more on this going forward...Today, I coded for about an hour and a half, mostly just trying to get back into the swing of things. My current focus is still on cursor input, since I'm trying to get this stuff out of the way before I write the AI and main components of the game; my current problem at-hand concerns the effort of returning pieces to their original place if the user decides that they do not want to use that piece. I have a solution in mind that will simply run through the board linearly to find the correct coordinates, but I'm attempting to find one with a better complexity. Perhaps a local dictionary mapping Vectors to gameObjects? What would the key be though?
 
 ------------------------------------------
+
+## 3/20/2019
+
+Time Spent: ~2:30
+
+Progress has been made! I actually was able to use a static dictionary to keep track of the pieces on the board, it uses more memory, but I think the time advantage is worth it. I was able to construct the key using the value of a struct of the piece's original coordinates, and after a few minor testing bugs, it worked rather flawlessly. After messing around with the sorting layers and ways that I copied the game objects, I was finally able to fully add and return pieces...but for some reason, the second row brings an exception. It's probably just a problem with the y-axis being slightly off, but I'll investigate that tomorrow.
