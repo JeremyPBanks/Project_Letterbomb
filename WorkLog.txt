@@ -15,3 +15,11 @@ I'm starting a work log in an effort to try to both document my progess as I go 
 Time Spent: ~2:30
 
 Progress has been made! I actually was able to use a static dictionary to keep track of the pieces on the board, it uses more memory, but I think the time advantage is worth it. I was able to construct the key using the value of a struct of the piece's original coordinates, and after a few minor testing bugs, it worked rather flawlessly. After messing around with the sorting layers and ways that I copied the game objects, I was finally able to fully add and return pieces...but for some reason, the second row brings an exception. It's probably just a problem with the y-axis being slightly off, but I'll investigate that tomorrow.
+
+------------------------------------------
+
+## 3/21/2019
+
+Time Spent: ~1:30
+
+It took me way longer to pinpoint the problem of that second row with regards to the hashing exception. Either way, I think I did myself a favor, because I simplified the function down from an entire struct to just an addition of integers. I wanted to work on this more today, but our next project for Security was just released, and I think I'll just get a head start on that instead.

@@ -22,18 +22,6 @@ public class myMovement : MonoBehaviour
         Player,
         Dragging
     };
-    
-    //Struct for the purpose of being able to make (x,y) points as a dictionary key
-    public struct Coordinates_Key
-	{
-	   public float x;
-	   public float y;
-	   public Coordinates_Key(float x, float y)
-	   {
-		  this.x = x;
-		  this.y = y;
-	   }
-	 }
 	 
 	public float myJump;
     public float jump_offset;
@@ -62,7 +50,7 @@ public class myMovement : MonoBehaviour
     private GameObject thisCursor;
     private GameObject selected;
     private myMovement the_other_script;
-    private static Dictionary<Coordinates_Key, GameObject> returnDict = new Dictionary<Coordinates_Key, GameObject>();
+    private static Dictionary<int, GameObject> returnDict = new Dictionary<int, GameObject>();
 
 
     void Start()
@@ -148,7 +136,6 @@ public class myMovement : MonoBehaviour
         {
             if (string.Equals(gameObject.name, "Arrow") && !enter_pressed1)
             {
-            	Debug.Log(gameObject.GetComponent<SpriteRenderer>().sortingOrder);
                 if (myCurrPosition.x >= -18.3)
                 {
                     transform.position = new Vector3(-17.4f, myCurrPosition.y, 0);
@@ -168,33 +155,25 @@ public class myMovement : MonoBehaviour
                 	the_other_obj.layer = (int)OBJECT_LAYERS.Normal;
                 	saved_position = selected.transform.position;
                 	selected.SetActive(false);
-                	Debug.Log("Grabbed Piece");
                 }
                 else
                 {
-                	Debug.Log(xValueFromDirection());
                 	myCurrPosition.x = xValueFromDirection();
-                	var key = new Coordinates_Key(myCurrPosition.x,myCurrPosition.y);
+                	int key = myHashFunction(myCurrPosition.x,myCurrPosition.y);
                 	GameObject return_piece = returnDict[key];
                 	GameObject piece_is_back = Instantiate(return_piece, myCurrPosition, Quaternion.identity);
                 	piece_is_back.transform.localScale = cursor_size5;
-                	//piece_is_back.layer = (int)OBJECT_LAYERS.Normal;
-                	//piece_is_back.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
                 	returnDict.Remove(key);
                 	return_piece.SetActive(false);
-                	Debug.Log("Phantom Piece");
                 }
             }
             else if (string.Equals(gameObject.name, "myCursor"))
             {
-            	Debug.Log("Now On Board");
                 GameObject new_obj = Instantiate(piece_template, myCurrPosition, Quaternion.identity);
                 new_obj.transform.localScale = cursor_size5;
-                //new_obj.layer = (int)OBJECT_LAYERS.Normal;
-                //new_obj.GetComponent<SpriteRenderer>().sortingOrder = (int)SORTING_LAYERS.Pieces;
                 new_obj.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
-                returnDict.Add(new Coordinates_Key(saved_position.x,saved_position.y),new_obj);
-                Debug.Log(saved_position);
+                int key = myHashFunction(saved_position.x,saved_position.y);
+                returnDict.Add(key,new_obj);
                 gameObject.SetActive(false);
                 the_other_script.enter_pressed1 = false;
             }
@@ -249,9 +228,9 @@ public class myMovement : MonoBehaviour
     }
 
 
-    //****************************************************************
+    //***************************************************************
     //*  Resizes grid-selection cursor to create an idle animation  *
-    //****************************************************************
+    //***************************************************************
     void idleAnimationGrid()
     {
         if (cursor_direction)
@@ -321,18 +300,18 @@ public class myMovement : MonoBehaviour
     }
     
     
-    //*****************************************************************
-    //*  Returns the x-valued coordinate based on the cursor location *
-    //*****************************************************************
+    //******************************************************************
+    //*  Returns the x-valued coordinate based on the cursor location  *
+    //******************************************************************
     private float xValueFromDirection()
     {
     	return (left_or_right) ? -15f : -20f ;
     }
 
 
-    //***************************************************************
-    //*  Finds the object piece the cursor is currently pointing to *
-    //***************************************************************
+    //****************************************************************
+    //*  Finds the object piece the cursor is currently pointing to  *
+    //****************************************************************
     private GameObject pieceGrabber(Vector2 current_location)
     {
         Vector2 final_values = new Vector2(0f, 0f);
@@ -347,5 +326,13 @@ public class myMovement : MonoBehaviour
         }
 
         return null;
+    }
+    
+    //*******************************************************************************************************
+    //*  Finds the hash index for returnDict. TODO: Make sure this is valid for all other variants of game  *
+    //*******************************************************************************************************
+    private int myHashFunction(float one, float two)
+    {
+    	return (int)one + (int)two;
     }
 }
