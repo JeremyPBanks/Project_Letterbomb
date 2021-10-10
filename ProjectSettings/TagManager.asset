@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - Bomb
+  - Dragging
+  - Letter
+  - 
+  - 
+  - 
+  - Board
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2571543831
+    locked: 0
+  - name: Board
+    uniqueID: 3463061491
+    locked: 0
+  - name: Letter
+    uniqueID: 1454238329
+    locked: 0
+  - name: Hovered
+    uniqueID: 2209427231
+    locked: 0
+  - name: Bomb
+    uniqueID: 364109831
+    locked: 0
+  - name: Dragging
+    uniqueID: 1167033595
+    locked: 0
+  - name: UI
+    uniqueID: 1287335949
+    locked: 0
