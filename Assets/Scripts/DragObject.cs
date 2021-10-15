@@ -24,8 +24,10 @@ public class DragObject : MonoBehaviour
 	public float offscreen_y = 4.34f;
 	public int value = 0;
 	public GameObject highlightObj;
+	public GameObject baseBoard;
     private bool over_board = false;
 	private bool hovering = false;
+	private BoardPlacement boardPlacement;
 	private BoxCollider2D box_collider;
 	private Collider2D[] overlapped_objects;
 	private Vector3 mouse_position_raw;
@@ -38,6 +40,7 @@ public class DragObject : MonoBehaviour
 	//~~UNITY: Start is called before the first frame update
 	void Start() {
 		box_collider = gameObject.GetComponent<BoxCollider2D>();
+		boardPlacement = baseBoard.GetComponent<BoardPlacement>();
 	}
 
 	//~~UNITY: Called ONCE per frame
@@ -93,6 +96,7 @@ public class DragObject : MonoBehaviour
 			transform.position = highlightLocation;
 			prevScale = new Vector3(0.5f,0.5f,0);
 			transform.localScale = prevScale;
+			boardPlacement.addLettersUsedThisTurn(this.gameObject);
 			Debug.Log("Piece Placement: (" + highlightLocation.x + "," + highlightLocation.y + ")");
 		}
 		else {
@@ -107,7 +111,7 @@ public class DragObject : MonoBehaviour
 
 	//~~UNITY: Called when the user has clicked on a Collider and is still holding down the mouse
 	void OnMouseDrag() {
-		Debug.Log("STATE CHANGE:::::Drag:::" + value);
+		Debug.Log("STATE CHANGE:::::Drag:::" + value + "::::::" + this.name);
 		hovering = false;
 		Vector3 mouse_position_current = new Vector3(Input.mousePosition.x, Input.mousePosition.y, mouse_position_raw.z);
 		Vector3 mouse_position_new = Camera.main.ScreenToWorldPoint(mouse_position_current) + offset;
