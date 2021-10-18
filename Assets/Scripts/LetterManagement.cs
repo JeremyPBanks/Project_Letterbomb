@@ -192,6 +192,7 @@ public class LetterManagement : MonoBehaviour
             //Player letter
             int localLetter = randomLetter(numSelectP);
             playerLetters[i] = Instantiate(objTemp, playerLetterPos[i] , Quaternion.identity);
+            playerLetters[i].name = "UserLetter-" + i;
             playerLetters[i].GetComponent<DragObject>().value = myLetterDict[localLetter].letter_value;
             playerLetters[i].GetComponent<SpriteRenderer>().sprite = myLetterDict[localLetter].letter_spr;
             /*Debug.Log(playerLetters[i].GetComponent<SpriteRenderer>().sprite.bounds.extents.x);
