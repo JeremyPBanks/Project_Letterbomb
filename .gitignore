@@ -367,3 +367,5 @@ FodyWeavers.xsd
 /Library/ShaderCache
 /Library/StateCache
 /Temp
+/Library/CrashedAssetImports.txt
+/Library/
