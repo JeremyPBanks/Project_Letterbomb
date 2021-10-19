@@ -48,8 +48,12 @@ public class BoardPlacement : MonoBehaviour
     //~~JEREMY: Adds letters to custom dictionary. Indexes of letters is determined by class of frequency (Key=index of letter,Value=sprite)
     public void AddLetterSum() {
         int sum = 0;
-        List<string> keysToActiveLetters = getKeysToActiveLetters();
-        foreach (String letterObjectName in keysToActiveLetters) {
+        List<string> keysToValidActiveLetters = getKeysToActiveLetters();
+        if (keysToValidActiveLetters.Count == 0) {
+            sum = -1;
+            Debug.Log("Incorrect -->" + sum);
+        }
+        foreach (String letterObjectName in keysToValidActiveLetters) {
             sum += letters_used_this_turn[letterObjectName].GetComponent<DragObject>().value;
         }
         Debug.Log("Buttton-->" + sum);//String.Join(", ", getKeysToActiveLetters()));
